@@ -1,3 +1,2 @@
-# Spring Kafka Avro
+# [WIP] Kafka priority consumer
 
-Producer and consumer for Apache Kafka using Apacha Avro serialization.
