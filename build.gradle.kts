@@ -36,6 +36,8 @@ dependencies {
     implementation("org.apache.kafka:kafka-streams")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
+
     implementation("org.springframework.kafka:spring-kafka")
 
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
@@ -44,6 +46,10 @@ dependencies {
     implementation("org.apache.avro:avro:1.11.1")
     implementation("io.confluent:kafka-avro-serializer:7.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:7.3.3")
+
+    implementation(platform("software.amazon.awssdk:bom:2.20.56"))
+    implementation("software.amazon.awssdk:dynamodb-enhanced")
+    implementation("software.amazon.awssdk:netty-nio-client")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.junit.vintage:junit-vintage-engine")
@@ -56,7 +62,6 @@ dependencies {
     testCompileOnly("org.testcontainers:testcontainers:1.15.2")
 
     compileOnly("org.apache.avro:avro-tools:1.11.1")
-    implementation("com.squareup:kotlinpoet:1.13.0")
 }
 
 dependencyManagement {
@@ -107,7 +112,7 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     dependsOn(avroGen)
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xjvm-default=all-compatibility")
         jvmTarget = "17"
     }
 }

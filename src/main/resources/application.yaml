@@ -20,21 +20,30 @@ spring:
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       enable-auto-commit: false
       client-id: ${random.long}
+      max-poll-records: 1000
     producer:
-      batch-size: 100000
+      batch-size: 1000
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        linger.ms: 0
+        enable.idempotence: false
 
+logging.level:
+  software.amazon.awssdk: DEBUG
+  software.amazon.awssdk.request: DEBUG
+  io.netty.handler.logging: DEBUG
+  io.netty.handler.codec.http2.Http2FrameLogger: DEBUG
   # Cloud Stream
-  cloud.stream:
-    bindings.output.contentType: application/avro
-    kafka.streams.binder.configuration:
-      commit.interval.ms: 1000
-      default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-      default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-    bindings.output:
-      destination: my.avro.topic.filtered
-      group: kafka-stream-5
-    bindings.input:
-      destination: my.avro.topic.raw
-      group: kafka-stream-5
+#  cloud.stream:
+#    bindings.output.contentType: application/avro
+#    kafka.streams.binder.configuration:
+#      commit.interval.ms: 1000
+#      default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+#      default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+#    bindings.output:
+#      destination: my.avro.topic.filtered
+#      group: kafka-stream-5
+#    bindings.input:
+#      destination: my.avro.topic.raw
+#      group: kafka-stream-5

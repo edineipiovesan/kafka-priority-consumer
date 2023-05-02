@@ -11,8 +11,18 @@
         {
             "name": "message",
             "type": "string", "avro.java.string": "String",
-            "default": "This is a default message",
-            "doc": "A custom message"
+            "doc": "A message to process"
+        },
+        {
+            "name": "created_at",
+            "type": "string", "avro.java.string": "String",
+            "doc": "Create timestamp at format ISO-8601"
+        },
+        {
+            "name": "time_to_live",
+            "type": "long",
+            "default": 500,
+            "doc": "Messages that exceed this time will not be processed anymore"
         }
     ]
 }
