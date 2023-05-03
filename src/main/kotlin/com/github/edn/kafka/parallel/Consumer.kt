@@ -2,6 +2,7 @@ package com.github.edn.kafka.parallel
 
 import com.github.edn.event.kafka.MyAvroEvent
 import com.github.edn.kafka.parallel.offsetcontrol.datastore.DynamoDbOffsetDatastore
+import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
@@ -14,7 +15,8 @@ import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 
 @Component
-class Consumer(private val dynamoDbOffsetDatastore: DynamoDbOffsetDatastore) : BatchAcknowledgingConsumerAwareMessageListener<String, MyAvroEvent>, ConsumerSeekAware {
+class Consumer(private val dynamoDbOffsetDatastore: DynamoDbOffsetDatastore) :
+    BatchAcknowledgingConsumerAwareMessageListener<String, MyAvroEvent>, ConsumerSeekAware {
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val queue = RecordPriorityQueue<Record>(
         size = 1_000_000,
@@ -61,8 +63,16 @@ class Consumer(private val dynamoDbOffsetDatastore: DynamoDbOffsetDatastore) : B
         callback: ConsumerSeekAware.ConsumerSeekCallback,
     ) {
         super.onPartitionsAssigned(assignments, callback)
-        // retrieve offset-partition
-        // seek
+        val topic = assignments.keys.first().topic()
+        val partitions = assignments.keys.map { it.partition() }.toSet()
+
+        runBlocking {
+            dynamoDbOffsetDatastore.retrieveLatestOffset(topic, partitions)
+                .forEach {
+                    // check received offset < database offset
+                    callback.seek(topic, it.first, it.second)
+                }
+        }
     }
 
     override fun onPartitionsRevoked(partitions: MutableCollection<TopicPartition>) {

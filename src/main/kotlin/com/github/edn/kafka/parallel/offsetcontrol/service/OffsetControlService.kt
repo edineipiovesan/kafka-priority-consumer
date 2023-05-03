@@ -47,7 +47,7 @@ class OffsetControlService(private val offsetDatastore: OffsetDatastore, syncInt
         // TODO remove contiguous offsets at insertion?
     }
 
-    suspend fun latestProcessedOffsetPartition(topic: String, partitions: List<Int>): List<Pair<Int, Long>> =
+    suspend fun latestProcessedOffsetPartition(topic: String, partitions: Set<Int>): List<Pair<Int, Long>> =
         offsetDatastore.retrieveLatestOffset(topic, partitions)
 
     private suspend fun syncOffsets() {
