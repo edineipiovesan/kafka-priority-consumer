@@ -30,6 +30,7 @@ class Consumer(private val dynamoDbOffsetDatastore: DynamoDbOffsetDatastore) :
     }
 
     @KafkaListener(
+        id = "my-enqueue-worker-listener",
         containerFactory = "batch-listener",
         topics = ["my.avro.topic"],
         concurrency = "3",

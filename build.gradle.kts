@@ -11,6 +11,8 @@ plugins {
     id("com.adarshr.test-logger") version "3.2.0"
     kotlin("jvm") version "1.8.20"
     kotlin("plugin.spring") version "1.8.20"
+
+    id("io.github.janbarari.gradle-analytics-plugin") version "1.0.1"
 }
 
 group = "com.github.edn"
@@ -26,22 +28,20 @@ repositories {
 extra["springCloudVersion"] = "2022.0.2"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.cloud:spring-cloud-stream")
-    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
-    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.apache.kafka:kafka-streams")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.kafka:spring-kafka")
-
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
 
     implementation("org.apache.avro:avro:1.11.1")
     implementation("io.confluent:kafka-avro-serializer:7.3.3")
@@ -55,8 +55,8 @@ dependencies {
         exclude("org.junit.vintage:junit-vintage-engine")
     }
     testImplementation("org.springframework.kafka:spring-kafka-test")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
 
+    testImplementation("io.kotest:kotest-assertions-core-jvm:4.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
     testCompileOnly("org.testcontainers:testcontainers:1.15.2")
@@ -143,4 +143,36 @@ plugins.withType<TestLoggerPlugin> {
         showFailedStandardStreams = true
         logLevel = LIFECYCLE
     }
+}
+
+
+//
+gradleAnalyticsPlugin {
+    enabled = true // Optional: By default it's True.
+
+    database {
+        local = sqlite {
+            path = "/build/"
+            name = "localdb"
+        }
+    }
+
+    trackingTasks = setOf(
+        // Add your requested tasks to be analyzed, Example:
+        ":app:assembleDebug",
+        ":jar",
+        ":assemble"
+    )
+
+    trackingBranches = setOf(
+        // requested tasks only analyzed in the branches you add here, Example:
+        "main",
+        "master",
+        "develop"
+    )
+
+    // Optional: Exclude modules that are not necessary like test or demo modules
+    excludeModules = setOf()
+
+    trackAllBranchesEnabled = false // Optional: Default is False.
 }

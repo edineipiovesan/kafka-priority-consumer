@@ -35,7 +35,7 @@ class RecordPriorityQueue<T>(
             .launchIn(metricsDispatcher)
     }
 
-    fun isFull(): Boolean = priorityQueue.size > size
+    private fun isFull(): Boolean = priorityQueue.size > size
 
     fun isNotFull(): Boolean = !isFull()
 

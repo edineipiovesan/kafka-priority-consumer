@@ -1,12 +1,12 @@
 server:
-  port: 9090
+  port: 80
 spring:
   config:
     name: kafka
 
   # Kafka
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${$BOOTSTRAP_SERVERS:localhost:9092}
     properties:
       schema.registry.url: http://localhost:8081
       specific.avro.reader: true
@@ -29,21 +29,16 @@ spring:
         linger.ms: 0
         enable.idempotence: false
 
+management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    probes:
+      enabled: true
+
 logging.level:
   software.amazon.awssdk: DEBUG
   software.amazon.awssdk.request: DEBUG
   io.netty.handler.logging: DEBUG
   io.netty.handler.codec.http2.Http2FrameLogger: DEBUG
-  # Cloud Stream
-#  cloud.stream:
-#    bindings.output.contentType: application/avro
-#    kafka.streams.binder.configuration:
-#      commit.interval.ms: 1000
-#      default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-#      default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-#    bindings.output:
-#      destination: my.avro.topic.filtered
-#      group: kafka-stream-5
-#    bindings.input:
-#      destination: my.avro.topic.raw
-#      group: kafka-stream-5

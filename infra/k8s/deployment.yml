@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-priority-consumer
+  labels:
+    app: web
+spec:
+  selector:
+    matchLabels:
+      octopusexport: OctopusExport
+  revisionHistoryLimit: 5
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: web
+        octopusexport: OctopusExport
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: kafka-priority-queue
+          image: 257254804006.dkr.ecr.us-east-1.amazonaws.com/application-repository:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: host-port
+              containerPort: 80
+              protocol: TCP
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: '2'
+            limits:
+              memory: 4Gi
+              cpu: '2'
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            timeoutSeconds: 1
+            httpGet:
+              host: ''
+              path: /actuator/health/liveness
+              port: 80
+              scheme: HTTP
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              host: ''
+              path: /actuator/health/readiness
+              port: 80
+              scheme: HTTP
+          startupProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              host: ''
+              path: /actuator/health
+              port: 80
+              scheme: HTTP
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - web
+                topologyKey: kubernetes.io/hostname

@@ -16,7 +16,7 @@ sealed interface TTLAware<T : TTLAware<T>> {
     fun isExpired(): Boolean = durationUntilExpires().toMillis() < 0
 }
 
-sealed interface IDAware<T : IDAware<T>> {
+fun interface IDAware<T : IDAware<T>> {
     fun id(): String
 }
 
