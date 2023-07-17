@@ -1,0 +1,10 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: adf41011-fcf3-4484-8079-ea4190dd9c00
+    allowUiUpdates: true
+    prometheusType: Prometheus
+    prometheusVersion: 2.45.0
+    url: http://prometheus:9090/

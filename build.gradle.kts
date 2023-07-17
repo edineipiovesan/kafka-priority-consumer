@@ -28,11 +28,13 @@ repositories {
 extra["springCloudVersion"] = "2022.0.2"
 
 dependencies {
+    // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
+    // Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -40,17 +42,28 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
+    // Monitoring
+    implementation("io.micrometer:micrometer-registry-prometheus:1.11.2")
+
+    // Jackson support for Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-
+    // Avro serialization
     implementation("org.apache.avro:avro:1.11.1")
     implementation("io.confluent:kafka-avro-serializer:7.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:7.3.3")
 
+    // Distributed rate limit
+    // implementation("com.bucket4j:bucket4j-core:8.3.0")
+    // implementation("com.bucket4j:bucket4j-redis:8.3.0")
+    // implementation("io.lettuce:lettuce-core:6.2.4.RELEASE")
+
+    // AWS
     implementation(platform("software.amazon.awssdk:bom:2.20.56"))
     implementation("software.amazon.awssdk:dynamodb-enhanced")
     implementation("software.amazon.awssdk:netty-nio-client")
 
+    // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.junit.vintage:junit-vintage-engine")
     }
@@ -60,8 +73,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
     testCompileOnly("org.testcontainers:testcontainers:1.15.2")
-
-    compileOnly("org.apache.avro:avro-tools:1.11.1")
 }
 
 dependencyManagement {
@@ -75,7 +86,7 @@ dependencyManagement {
  */
 buildscript {
     dependencies {
-        classpath("org.apache.avro:avro-tools:1.11.1")
+        classpath("org.apache.avro:avro-tools:1.11.2")
     }
 }
 

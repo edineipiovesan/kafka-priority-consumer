@@ -1,4 +1,4 @@
-rootProject.name = "spring-kafka-avro"
+rootProject.name = "kafka-priority-consumer-app"
 
 pluginManagement {
     repositories {

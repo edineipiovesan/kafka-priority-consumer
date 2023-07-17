@@ -1,8 +1,8 @@
 server:
-  port: 80
+  port: 9090
 spring:
   config:
-    name: kafka
+    name: priority-kafka-consumer-app
 
   # Kafka
   kafka:
@@ -30,6 +30,13 @@ spring:
         enable.idempotence: false
 
 management:
+  metrics:
+    tags:
+      application: ${spring.config.name:default-app-name}
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   endpoint:
     health:
       show-details: always
@@ -38,6 +45,8 @@ management:
       enabled: true
 
 logging.level:
+  root: INFO
+  com.github.edn: INFO
   software.amazon.awssdk: DEBUG
   software.amazon.awssdk.request: DEBUG
   io.netty.handler.logging: DEBUG

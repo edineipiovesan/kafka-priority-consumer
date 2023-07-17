@@ -1,0 +1,23 @@
+global:
+  scrape_interval:     1s
+  evaluation_interval: 1s
+
+# A scrape configuration containing exactly one endpoint to scrape.
+scrape_configs:
+  - job_name: 'application'
+    scrape_interval: 1s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9090']
+
+  - job_name: 'kafka-jmx-exporter'
+    scrape_interval: 1s
+    static_configs:
+      - targets: ['broker:9200']
+
+  - job_name: 'kafka-exporter'
+    scrape_interval: 1s
+    metrics_path: /metrics
+    static_configs:
+      - targets: [ 'kafka-exporter:9308' ]
+
